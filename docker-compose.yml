@@ -3,9 +3,9 @@ services:
   dotnet_postgres:
     image: postgres:alpine
     environment:
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: mydatabase
+      POSTGRES_USER : myuser
+      POSTGRES_PASSWORD : mypassword
+      POSTGRES_DB : mydatabase
     ports:
       - "5432:5432"
     
@@ -23,7 +23,7 @@ services:
     
   dotnet_main:
     environment:
-      - Default="Server=localhost;Port=5433;Database=mydatabase;User Id=myuser;Password=mypassword;"
+      ConnectionStrings__Default: Server=localhost;Port=5433;Database=mydatabase;User Id=myuser;Password=mypassword;      
     image: dotnet-web
     ports:
       - "8080:80"
