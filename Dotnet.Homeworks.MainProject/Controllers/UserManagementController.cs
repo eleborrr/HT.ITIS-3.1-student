@@ -17,10 +17,9 @@ public class UserManagementController : ControllerBase
     }
 
     [HttpPost("user")]
-    public async Task<IActionResult> CreateUser(RegisterUserDto userDto, CancellationToken cancellationToken)
+    public Task<IActionResult> CreateUser(RegisterUserDto userDto, CancellationToken cancellationToken)
     {
-        await _registrationService.RegisterAsync(userDto);
-        return Ok();
+        throw new NotImplementedException();
     }
 
     [HttpGet("profile/{guid}")]
@@ -30,9 +29,9 @@ public class UserManagementController : ControllerBase
     }
 
     [HttpGet("users")]
-    public async Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
+    public Task<IActionResult> GetAllUsers(CancellationToken cancellationToken)
     {
-        return Ok("asd");
+        throw new NotImplementedException();
     }
 
     [HttpDelete("profile/{guid:guid}")]
