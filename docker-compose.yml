@@ -9,9 +9,19 @@ services:
     ports:
       - "5432:5432"
     
-#  dotnet_rabbitmq:
-#    image: rabbitmq:3-alpine
-    
+  dotnet_rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: "rabbitmq"
+    container_name: "rabbitmq"
+    environment:
+      RABBITMQ_DEFAULT_USER: rmuser
+      RABBITMQ_DEFAULT_PASS: rmpassword
+    ports:
+      - 5672:5672
+      - 15672:15672
+    expose:
+      - 5672
+      - 15672
 #  dotnet_minio:
 #    image: minio/minio:latest
    
@@ -32,9 +42,22 @@ services:
       dockerfile: Dotnet.Homeworks.MainProject/Dockerfile
     depends_on:
       - dotnet_postgres
+      - dotnet_rabbitmq
     
-#  dotnet_mailing:
-#    image: dotnet-web
+  dotnet_mailing:
+    image: dotnet-web
+    build:
+      context: .
+      dockerfile: "Dotnet.Homeworks.Mailing.API/Dockerfile"
+    environment:
+      EmailConfig__Host: rmuser
+      EmailConfig__Password: rmpassword
+      EmailConfig__Email: rmpassword
+      EmailConfig__Port: rmpassword
+    ports:
+      - "8000:80"
+    depends_on:
+      - dotnet_rabbitmq
     
 #  dotnet_storage:
 #    image: dotnet-web
