@@ -5,19 +5,15 @@ using Dotnet.Homeworks.Mailing.API.ServicesExtensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
+
+builder.Services.AddLogging();
+
+
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
 builder.Services.AddScoped<IMailingService, MailingService>();
 
-var rabbitMqConfig = new RabbitMqConfig
-{
-    Hostname = builder.Configuration["MessageBroker:Hostname"],
-    Password = builder.Configuration["MessageBroker:Password"],
-    Username = builder.Configuration["MessageBroker:Username"],
-    Port = builder.Configuration["MessageBroker:Port"]
-};
-
-
-builder.Services.AddMasstransitRabbitMq(rabbitMqConfig);
+builder.Services.AddMasstransitRabbitMq(builder.Configuration);
 
 
 var app = builder.Build();

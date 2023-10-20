@@ -7,16 +7,23 @@ namespace Dotnet.Homeworks.Mailing.API.ServicesExtensions;
 public static class AddMasstransitRabbitMqExtensions
 {
     public static IServiceCollection AddMasstransitRabbitMq(this IServiceCollection services,
-        RabbitMqConfig rabbitConfiguration)
+        IConfiguration configuration)
     {
+        var rabbitConfiguration = new RabbitMqConfig
+        {
+            Hostname = configuration["MessageBroker:Hostname"],
+            Password = configuration["MessageBroker:Password"],
+            Username = configuration["MessageBroker:Username"],
+            Port = configuration["MessageBroker:Port"]
+        };
+        
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.AddConsumer<EmailConsumer>();
-
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
-                var uri = 
-                    new Uri($"amqp://{rabbitConfiguration.Username}:{rabbitConfiguration.Password}@{rabbitConfiguration.Hostname}:{rabbitConfiguration.Port}/");
+                var uri =
+                    $"amqp://{rabbitConfiguration.Username}:{rabbitConfiguration.Password}@{rabbitConfiguration.Hostname}:{rabbitConfiguration.Port}";
                 configurator.Host(uri);
                 configurator.ConfigureEndpoints(context);
             });

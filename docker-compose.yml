@@ -33,8 +33,12 @@ services:
     
   dotnet_main:
     environment:
-      ConnectionStrings__Default: Server=localhost;Port=5433;Database=mydatabase;User Id=myuser;Password=mypassword;      
-    image: dotnet-web
+      MessageBroker__Username: rmuser
+      MessageBroker__Password: rmpassword
+      MessageBroker__Hostname: rabbitmq
+      MessageBroker__Port: 5672
+      ConnectionStrings__Default: Server=localhost;Port=5432;Database=mydatabase;User Id=myuser;Password=mypassword;      
+    image: homework-main
     ports:
       - "8080:80"
     build:
@@ -45,15 +49,19 @@ services:
       - dotnet_rabbitmq
     
   dotnet_mailing:
-    image: dotnet-web
+    image: homework-mailing
     build:
       context: .
-      dockerfile: "Dotnet.Homeworks.Mailing.API/Dockerfile"
+      dockerfile: Dotnet.Homeworks.Mailing.API/Dockerfile
     environment:
-      EmailConfig__Host: rmuser
-      EmailConfig__Password: rmpassword
-      EmailConfig__Email: rmpassword
-      EmailConfig__Port: rmpassword
+      EmailConfig__Host: "smtp.mail.ru"
+      EmailConfig__Password: "pswrd"
+      EmailConfig__Email: "beavertinder-noreply@mail.ru"
+      EmailConfig__Port: 25
+      MessageBroker__Username: rmuser
+      MessageBroker__Password: rmpassword
+      MessageBroker__Hostname: rabbitmq
+      MessageBroker__Port: 5672
     ports:
       - "8000:80"
     depends_on:

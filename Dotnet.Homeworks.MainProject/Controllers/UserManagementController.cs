@@ -10,16 +10,20 @@ namespace Dotnet.Homeworks.MainProject.Controllers;
 public class UserManagementController : ControllerBase
 {
     private readonly IRegistrationService _registrationService;
+    private readonly ILogger<UserManagementController> _logger;
 
-    public UserManagementController(ICommunicationService communicationService, IRegistrationService registrationService)
+    public UserManagementController(IRegistrationService registrationService, ILogger<UserManagementController> logger)
     {
         _registrationService = registrationService;
+        _logger = logger;
     }
 
     [HttpPost("user")]
-    public Task<IActionResult> CreateUser(RegisterUserDto userDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateUser(RegisterUserDto userDto, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        _logger.Log(LogLevel.Information, userDto.Email);
+        await _registrationService.RegisterAsync(userDto);
+        return Ok();
     }
 
     [HttpGet("profile/{guid}")]

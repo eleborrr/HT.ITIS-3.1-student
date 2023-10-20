@@ -10,20 +10,15 @@ builder.Services.AddControllers();
 
 builder.Configuration.AddEnvironmentVariables();
 
+builder.Services.AddLogging();
+
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
 
 builder.Services.AddSingleton<IRegistrationService, RegistrationService>();
 builder.Services.AddSingleton<ICommunicationService, CommunicationService>();
 
-var rabbitMqConfig = new RabbitMqConfig
-{
-    Hostname = builder.Configuration["MessageBroker:Hostname"],
-    Password = builder.Configuration["MessageBroker:Password"],
-    Username = builder.Configuration["MessageBroker:Username"],
-    Port = builder.Configuration["MessageBroker:Port"]
-};
-builder.Services.AddMasstransitRabbitMq(rabbitMqConfig);
+builder.Services.AddMasstransitRabbitMq(builder.Configuration);
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
