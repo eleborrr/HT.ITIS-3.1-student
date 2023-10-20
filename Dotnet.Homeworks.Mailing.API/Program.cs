@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddLogging();
+builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));
+builder.Services.AddScoped<IMailingService, MailingService>();
 
 
 builder.Services.Configure<EmailConfig>(builder.Configuration.GetSection("EmailConfig"));

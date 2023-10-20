@@ -55,7 +55,7 @@ services:
       dockerfile: Dotnet.Homeworks.Mailing.API/Dockerfile
     environment:
       EmailConfig__Host: "smtp.mail.ru"
-      EmailConfig__Password: "pswrd"
+      EmailConfig__Password: "wLWf8vwx0azwtZU8HY0y"
       EmailConfig__Email: "beavertinder-noreply@mail.ru"
       EmailConfig__Port: 25
       MessageBroker__Username: rmuser
