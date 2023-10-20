@@ -9,9 +9,19 @@ services:
     ports:
       - "5432:5432"
     
-#  dotnet_rabbitmq:
-#    image: rabbitmq:3-alpine
-    
+  dotnet_rabbitmq:
+    image: rabbitmq:3-management-alpine
+    hostname: "rabbitmq"
+    container_name: "rabbitmq"
+    environment:
+      RABBITMQ_DEFAULT_USER: rmuser
+      RABBITMQ_DEFAULT_PASS: rmpassword
+    ports:
+      - 5672:5672
+      - 15672:15672
+    expose:
+      - 5672
+      - 15672
 #  dotnet_minio:
 #    image: minio/minio:latest
    
@@ -23,8 +33,12 @@ services:
     
   dotnet_main:
     environment:
-      ConnectionStrings__Default: Server=localhost;Port=5433;Database=mydatabase;User Id=myuser;Password=mypassword;      
-    image: dotnet-web
+      MessageBroker__Username: rmuser
+      MessageBroker__Password: rmpassword
+      MessageBroker__Hostname: rabbitmq
+      MessageBroker__Port: 5672
+      ConnectionStrings__Default: Server=localhost;Port=5432;Database=mydatabase;User Id=myuser;Password=mypassword;      
+    image: homework-main
     ports:
       - "8080:80"
     build:
@@ -32,9 +46,26 @@ services:
       dockerfile: Dotnet.Homeworks.MainProject/Dockerfile
     depends_on:
       - dotnet_postgres
+      - dotnet_rabbitmq
     
-#  dotnet_mailing:
-#    image: dotnet-web
+  dotnet_mailing:
+    image: homework-mailing
+    build:
+      context: .
+      dockerfile: Dotnet.Homeworks.Mailing.API/Dockerfile
+    environment:
+      EmailConfig__Host: "smtp.mail.ru"
+      EmailConfig__Password: "pswrd"
+      EmailConfig__Email: "beavertinder-noreply@mail.ru"
+      EmailConfig__Port: 25
+      MessageBroker__Username: rmuser
+      MessageBroker__Password: rmpassword
+      MessageBroker__Hostname: rabbitmq
+      MessageBroker__Port: 5672
+    ports:
+      - "8000:80"
+    depends_on:
+      - dotnet_rabbitmq
     
 #  dotnet_storage:
 #    image: dotnet-web
