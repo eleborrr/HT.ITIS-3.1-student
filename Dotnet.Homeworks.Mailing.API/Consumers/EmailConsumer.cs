@@ -9,19 +9,15 @@ namespace Dotnet.Homeworks.Mailing.API.Consumers;
 public class EmailConsumer : IEmailConsumer
 {
     private readonly IMailingService _mailingService;
-    private readonly ILogger<EmailConsumer> _logger;
-
-    public EmailConsumer(IMailingService mailingService, ILogger<EmailConsumer> logger)
+    public EmailConsumer(IMailingService mailingService)
     {
         _mailingService = mailingService;
-        _logger = logger;
     }
 
     public async Task Consume(ConsumeContext<SendEmail> context)
     {
         var msg = context.Message;
 
-        _logger.Log(LogLevel.Information, $"CONSUMED! {msg.ReceiverEmail}, {msg.Subject}, {msg.Content}");
         var email = new EmailMessage(msg.ReceiverEmail, msg.Subject, msg.Content);
         
         await _mailingService.SendEmailAsync(email);

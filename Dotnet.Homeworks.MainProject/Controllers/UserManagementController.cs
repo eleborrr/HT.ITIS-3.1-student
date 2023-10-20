@@ -10,18 +10,15 @@ namespace Dotnet.Homeworks.MainProject.Controllers;
 public class UserManagementController : ControllerBase
 {
     private readonly IRegistrationService _registrationService;
-    private readonly ILogger<UserManagementController> _logger;
 
-    public UserManagementController(IRegistrationService registrationService, ILogger<UserManagementController> logger)
+    public UserManagementController(IRegistrationService registrationService)
     {
         _registrationService = registrationService;
-        _logger = logger;
     }
 
     [HttpPost("user")]
     public async Task<IActionResult> CreateUser(RegisterUserDto userDto, CancellationToken cancellationToken)
     {
-        _logger.Log(LogLevel.Information, userDto.Email);
         await _registrationService.RegisterAsync(userDto);
         return Ok();
     }

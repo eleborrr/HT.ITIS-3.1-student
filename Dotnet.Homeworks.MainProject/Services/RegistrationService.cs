@@ -6,18 +6,14 @@ namespace Dotnet.Homeworks.MainProject.Services;
 public class RegistrationService : IRegistrationService
 {
     private readonly ICommunicationService _communicationService;
-    private readonly ILogger<RegistrationService> _logger;
 
-    public RegistrationService(ICommunicationService communicationService, ILogger<RegistrationService> logger)
+    public RegistrationService(ICommunicationService communicationService)
     {
         _communicationService = communicationService;
-        _logger = logger;
     }
 
     public async Task RegisterAsync(RegisterUserDto userDto)
     {
-        
-        _logger.Log(LogLevel.Information, "Trying to send email");
         // pretending we have some complex logic here
         await Task.Delay(100);
         
