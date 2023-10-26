@@ -2,6 +2,7 @@ version: '3.8'
 services:
   dotnet_postgres:
     image: postgres:alpine
+    hostname: dotnet-postgres
     environment:
       POSTGRES_USER : myuser
       POSTGRES_PASSWORD : mypassword
@@ -37,7 +38,7 @@ services:
       MessageBroker__Password: rmpassword
       MessageBroker__Hostname: rabbitmq
       MessageBroker__Port: 5672
-      ConnectionStrings__Default: Server=localhost;Port=5432;Database=mydatabase;User Id=myuser;Password=mypassword;      
+      ConnectionStrings__Default: Server=dotnet_postgres;Port=5432;Database=mydatabase;User Id=myuser;Password=mypassword;      
     image: homework-main
     ports:
       - "8080:80"

@@ -22,7 +22,7 @@ internal sealed class InsertProductCommandHandler: ICommandHandler<InsertProduct
         {
             Name = request.Name
         };
-        var inserted = await _unitOfWork.GetProductRepository().InsertProductAsync(product, cancellationToken);
+        var inserted = await _unitOfWork.ProductRepository.InsertProductAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         
         return new Result<InsertProductDto>(

@@ -19,7 +19,7 @@ internal sealed class DeleteProductByGuidCommandHandler: ICommandHandler<DeleteP
     {
         try
         {
-            await _unitOfWork.GetProductRepository().DeleteProductByGuidAsync(request.Guid, cancellationToken);
+            await _unitOfWork.ProductRepository.DeleteProductByGuidAsync(request.Guid, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
         catch (ArgumentException e)

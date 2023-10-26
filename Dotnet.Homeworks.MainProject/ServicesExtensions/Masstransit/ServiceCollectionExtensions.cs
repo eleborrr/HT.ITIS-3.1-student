@@ -20,12 +20,6 @@ public static class ServiceCollectionExtensions
         {
             busConfigurator.UsingRabbitMq((context, configurator) =>
             {
-                Console.WriteLine("--------------->");
-                Console.WriteLine(rabbitConfiguration.Username);
-                Console.WriteLine(rabbitConfiguration.Password);
-                Console.WriteLine(rabbitConfiguration.Hostname);
-                Console.WriteLine(rabbitConfiguration.Port);
-                Console.WriteLine("--------------->");
                 var uri =
                     $"amqp://{rabbitConfiguration.Username}:{rabbitConfiguration.Password}@{rabbitConfiguration.Hostname}:{rabbitConfiguration.Port}";
                 configurator.Host(uri);

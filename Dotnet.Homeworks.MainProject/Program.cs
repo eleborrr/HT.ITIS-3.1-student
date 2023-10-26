@@ -38,14 +38,21 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-// if (app.Environment.IsDevelopment())
-// {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-// }
+}
 
 app.MapGet("/", () => "Hello World!");
 
 app.MapControllers();
+
+
+using var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+await using var dbContext = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+await dbContext.Database.MigrateAsync();
 
 app.Run();

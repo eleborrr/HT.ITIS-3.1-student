@@ -17,7 +17,7 @@ internal sealed class GetProductsQueryHandler: IQueryHandler<GetProductsQuery, G
     
     public async Task<Result<GetProductsDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        var products = (await _unitOfWork.GetProductRepository().GetAllProductsAsync(cancellationToken))
+        var products = (await _unitOfWork.ProductRepository.GetAllProductsAsync(cancellationToken))
             .Select(product => new GetProductDto(product.Id, product.Name));
         
         return new Result<GetProductsDto>(

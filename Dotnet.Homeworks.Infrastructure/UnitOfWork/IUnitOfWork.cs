@@ -5,5 +5,5 @@ namespace Dotnet.Homeworks.Infrastructure.UnitOfWork;
 public interface IUnitOfWork
 {
     Task SaveChangesAsync(CancellationToken token);
-    IProductRepository GetProductRepository();
+    IProductRepository ProductRepository { get; }
 }

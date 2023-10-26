@@ -17,12 +17,12 @@ internal sealed class UpdateProductCommandHandler: ICommandHandler<UpdateProduct
 
     public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var product = (await _unitOfWork.GetProductRepository().GetAllProductsAsync(cancellationToken))
+        var product = (await _unitOfWork.ProductRepository.GetAllProductsAsync(cancellationToken))
             .FirstOrDefault(pr => pr.Id == request.Guid);
         if (product is null)
             return new Result(false, $"Product with id {request.Guid} not found");
         
-        await _unitOfWork.GetProductRepository().UpdateProductAsync(product, cancellationToken);
+        await _unitOfWork.ProductRepository.UpdateProductAsync(product, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new Result(true);

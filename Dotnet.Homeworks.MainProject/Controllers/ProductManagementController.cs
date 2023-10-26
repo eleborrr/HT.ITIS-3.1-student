@@ -20,8 +20,8 @@ public class ProductManagementController : ControllerBase
     [HttpGet("products")]
     public async Task<IActionResult> GetProducts(CancellationToken cancellationToken)
     {
-        await _mediator.Send(new GetProductsQuery(), cancellationToken);
-        return Ok();
+        var response = await _mediator.Send(new GetProductsQuery(), cancellationToken);
+        return Ok(response);
     }
 
     [HttpPost("product")]
