@@ -1,9 +1,22 @@
-﻿namespace Dotnet.Homeworks.Infrastructure.UnitOfWork;
+﻿using Dotnet.Homeworks.Data.DatabaseContext;
+using Dotnet.Homeworks.DataAccess.Repositories;
+using Dotnet.Homeworks.Domain.Abstractions.Repositories;
+
+namespace Dotnet.Homeworks.Infrastructure.UnitOfWork;
 
 public class UnitOfWork : IUnitOfWork
 {
-    public Task SaveChangesAsync(CancellationToken token)
+    private AppDbContext _db;
+    public IProductRepository ProductRepository { get; }
+
+    public UnitOfWork(AppDbContext db)
     {
-        throw new NotImplementedException();
+        _db = db;
+        ProductRepository = new ProductRepository(_db);
+    }
+    
+    public async Task SaveChangesAsync(CancellationToken token)
+    {
+        await _db.SaveChangesAsync(token);
     }
 }

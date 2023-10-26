@@ -11,7 +11,7 @@ namespace Dotnet.Homeworks.Mailing.API.Services;
 public class MailingService : IMailingService
 {
     private readonly EmailConfig _emailConfig;
-
+    
     public MailingService(IOptions<EmailConfig> emailConfig)
     {
         _emailConfig = emailConfig.Value;
