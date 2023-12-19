@@ -8,6 +8,6 @@ public static class ServiceCollectionExtensions
     //TODO: Register your custom mediator
     public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] handlersAssemblies)
     {
-        throw new NotImplementedException();
+        
     }
 }

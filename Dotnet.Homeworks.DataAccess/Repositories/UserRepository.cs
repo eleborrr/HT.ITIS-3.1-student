@@ -41,7 +41,7 @@ public class UserRepository : IUserRepository
 
     public async Task<Guid> InsertUserAsync(User user, CancellationToken cancellationToken)
     {
-        await _dbContext.Users.AddAsync(user, cancellationToken);
-        return user.Id; //TODO check what id should i return: from Entity or from db
+        var result = await _dbContext.Users.AddAsync(user, cancellationToken);
+        return result.Entity.Id;
     }
 }
