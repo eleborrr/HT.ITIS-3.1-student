@@ -1,9 +1,10 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Reactive.Linq;
 using Dotnet.Homeworks.Shared.Dto;
 using Dotnet.Homeworks.Storage.API.Dto.Internal;
 using Minio;
+using Minio.DataModel;
 using Minio.DataModel.Args;
+using Minio.Exceptions;
 
 namespace Dotnet.Homeworks.Storage.API.Services;
 
@@ -22,11 +23,14 @@ public class ImageStorage : IStorage<Image>
     {
         try
         {
+            item.Content.Position = 0;
+            item.Metadata.Add(Constants.MetadataKeys.Destination, _bucketStorageName);
             var putObjArgs = new PutObjectArgs()
-                .WithBucket(_bucketStorageName)
+                .WithBucket(Constants.Buckets.Pending)
                 .WithObject(item.FileName)
                 .WithStreamData(item.Content)
                 .WithContentType(item.ContentType)
+                .WithHeaders(item.Metadata)
                 .WithObjectSize(item.Content.Length);
             await _minioClient.PutObjectAsync(putObjArgs, cancellationToken);
             return new Result(true);
@@ -48,8 +52,21 @@ public class ImageStorage : IStorage<Image>
             {
                 stream.CopyTo(memoryStream);
             });
-        await _minioClient.GetObjectAsync(putObjArgs, cancellationToken);
-        return JsonSerializer.Deserialize<Image>(memoryStream);
+        ObjectStat resp;
+        try
+        {
+            resp = await _minioClient.GetObjectAsync(putObjArgs, cancellationToken);
+        }
+        catch (BucketNotFoundException)
+        {
+            return null;
+        }
+        catch (ObjectNotFoundException)
+        {
+            return null;
+        }
+        memoryStream.Position = 0;
+        return new Image(memoryStream, resp.ObjectName, resp.ContentType, resp.MetaData);
     }
 
     public Task<Result> RemoveItemAsync(string itemName, CancellationToken cancellationToken = default)
@@ -68,20 +85,15 @@ public class ImageStorage : IStorage<Image>
         }
     }
 
-    public Task<IEnumerable<string>> EnumerateItemNamesAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<string>> EnumerateItemNamesAsync(CancellationToken cancellationToken = default)
     {
-        var res = new List<string>();
         var listArgs = new ListObjectsArgs()
             .WithBucket(_bucketStorageName);
-        var observable = _minioClient.ListObjectsAsync(listArgs);
-        var subscription = observable.Subscribe(
-                item => res.Add(item.Key),
-            ex => Console.WriteLine($"OnError: {ex}"),
-            () => Console.WriteLine($"Listed all objects in bucket {_bucketStorageName}\n"));
-        return Task.FromResult(res.AsEnumerable());
+        return await _minioClient.ListObjectsAsync(listArgs, cancellationToken)
+            .Select(x => x.Key).ToList();;
     }
 
-    public Task<Result> CopyItemToBucketAsync(string itemName, string destinationBucketName,
+    public async Task<Result> CopyItemToBucketAsync(string itemName, string destinationBucketName,
         CancellationToken cancellationToken = default)
     {
         try
@@ -92,14 +104,19 @@ public class ImageStorage : IStorage<Image>
 
             var copyObjArgs = new CopyObjectArgs()
                 .WithBucket(destinationBucketName)
+                .WithObject(itemName)
                 .WithCopyObjectSource(objSourceArgs);
 
-            _minioClient.CopyObjectAsync(copyObjArgs, cancellationToken);
-            return Task.FromResult(new Result(true));
+            await _minioClient.CopyObjectAsync(copyObjArgs, cancellationToken);
+            return new Result(true);
         }
-        catch (Exception e)
+        catch (BucketNotFoundException e)
         {
-            return Task.FromResult(new Result(false, e.Message));
+            return new Result(false, e.Message);
+        }
+        catch (ObjectNotFoundException e)
+        {
+            return new Result(false,e.Message);
         }
     }
 }

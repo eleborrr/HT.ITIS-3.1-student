@@ -31,8 +31,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      MINIO_ROOT_USER: ozontech
-      MINIO_ROOT_PASSWORD: minio123
+      MINIO_ROOT_USER: testMinioAdmin
+      MINIO_ROOT_PASSWORD: t35tM1n10A4m1nP655w0r4
    
 #  dotnet_mongodb:
 #    image: mongo:latest
@@ -82,8 +82,10 @@ services:
       context: .
       dockerfile: Dotnet.Homeworks.Storage.API/Dockerfile
     environment:
-      MinioConfig__Username: ozontech
-      MinioConfig__Password: minio123
+      MinioConfig__Username: testMinioAdmin
+      MinioConfig__Password: t35tM1n10A4m1nP655w0r4
       MinioConfig__Endpoint: minio
       MinioConfig__Port: 9000
       MinioConfig__WithSsl: false
+    depends_on: 
+      - dotnet_minio
