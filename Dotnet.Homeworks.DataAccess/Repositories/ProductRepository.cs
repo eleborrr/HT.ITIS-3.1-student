@@ -36,7 +36,7 @@ public class ProductRepository : IProductRepository
 
     public async Task<Guid> InsertProductAsync(Product product, CancellationToken cancellationToken)
     {
-        await _dbContext.Products.AddAsync(product, cancellationToken);
-        return product.Id; //TODO check what id should i return: from Entity or from db
+        var result = await _dbContext.Products.AddAsync(product, cancellationToken);
+        return result.Entity.Id; //TODO check what id should i return: from Entity or from db
     }
 }

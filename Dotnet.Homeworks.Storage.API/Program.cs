@@ -3,7 +3,7 @@ using Dotnet.Homeworks.Storage.API.Endpoints;
 using Dotnet.Homeworks.Storage.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.Configuration.AddEnvironmentVariables();
 builder.Services.Configure<MinioConfig>(builder.Configuration.GetSection("MinioConfig"));
 builder.Services.AddSingleton<IStorageFactory, StorageFactory>();
 builder.Services.AddHostedService<PendingObjectsProcessor>();

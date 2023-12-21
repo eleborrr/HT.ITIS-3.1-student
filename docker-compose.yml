@@ -23,8 +23,16 @@ services:
     expose:
       - 5672
       - 15672
-#  dotnet_minio:
-#    image: minio/minio:latest
+
+  dotnet_minio:
+    image: minio/minio:latest
+    command: server --console-address ":9001" /data/
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: testMinioAdmin
+      MINIO_ROOT_PASSWORD: t35tM1n10A4m1nP655w0r4
    
 #  dotnet_mongodb:
 #    image: mongo:latest
@@ -68,5 +76,16 @@ services:
     depends_on:
       - dotnet_rabbitmq
     
-#  dotnet_storage:
-#    image: dotnet-web
+  dotnet_storage:
+    image: dotnet-web
+    build:
+      context: .
+      dockerfile: Dotnet.Homeworks.Storage.API/Dockerfile
+    environment:
+      MinioConfig__Username: testMinioAdmin
+      MinioConfig__Password: t35tM1n10A4m1nP655w0r4
+      MinioConfig__Endpoint: minio
+      MinioConfig__Port: 9000
+      MinioConfig__WithSsl: false
+    depends_on: 
+      - dotnet_minio

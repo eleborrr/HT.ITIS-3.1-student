@@ -8,10 +8,12 @@ public class UnitOfWork : IUnitOfWork
 {
     private AppDbContext _db;
     public IProductRepository ProductRepository { get; }
+    public IUserRepository UserRepository { get; }
 
     public UnitOfWork(AppDbContext db)
     {
         _db = db;
+        UserRepository = new UserRepository(_db);
         ProductRepository = new ProductRepository(_db);
     }
     

@@ -9,5 +9,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] handlersAssemblies)
     {
         throw new NotImplementedException();
+        // services.AddSingleton();
     }
 }
